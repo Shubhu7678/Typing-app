@@ -29,10 +29,7 @@ const Home = () => {
   const textRef = useRef(null);
 
   const currentText = textData[currentTextIndex];
-
-  // Start typing after countdown
   useEffect(() => {
-    // console.log("startedTyping", startedTyping);
     if (countdown > 0 && startTyping) {
       const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
       return () => clearTimeout(timer);
@@ -50,10 +47,6 @@ const Home = () => {
             setStartedTyping(false);
             return 0;
           }
-          //  const elapsedTime = 30 - prev + 1; // Time elapsed in seconds
-          // const wordsTyped = typedText.trim().split(/\s+/).length;
-          // setWpm(Math.round((wordsTyped / elapsedTime) * 60)); // WPM formula
-
           return prev - 1;
         });
       }, 1000);
@@ -72,7 +65,6 @@ const Home = () => {
     }
   }, [typedText, elapsedTime]);
 
-  // Handle key press to track typed words
   const handleKeyPress = (e) => {
     console.log(e.key);
     if (isTyping) {
@@ -103,7 +95,6 @@ const Home = () => {
     }
   };
 
-  // Start typing session
   const startTyping = () => {
     setStartedTyping(true);
     setCountdown(3);
@@ -164,7 +155,9 @@ const HomeWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: calc(100vh - 142px);
+  // height: calc(100vh - 142px);
+  height:100%;
+  width:100%;
   background: #101828;
   color: var(--grey-100);
   font-family: "Courier New", Courier, monospace;
