@@ -5,7 +5,7 @@ import styled from "styled-components";
 
 const menuData = [
   {
-    title: "Dashboard",
+    title: "Solo",
     children: [
       { subtitle: "Home", link: "/" },
       { subtitle: "Time", link: "/time-race" },

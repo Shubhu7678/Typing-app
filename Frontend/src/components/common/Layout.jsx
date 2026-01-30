@@ -1,20 +1,19 @@
 import React from "react";
 import Header from "./Header";
-import SubHeader from "./SubHeader";
-import styled from "styled-components";
 import Sidebar from "./Sidebar";
+import styled from "styled-components";
+import { Outlet } from "react-router-dom";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   return (
     <LayoutWrapper>
-      <div>
-        <Header />
-      </div>
+      <Header />
+
       <div className="main-content">
-        <div>
-          <Sidebar />
-        </div>
-        <main className="body-content">{children}</main>
+        <Sidebar />
+        <main className="body-content">
+          <Outlet />
+        </main>
       </div>
     </LayoutWrapper>
   );
@@ -23,12 +22,13 @@ const Layout = ({ children }) => {
 const LayoutWrapper = styled.div`
   .main-content {
     display: flex;
-    // gap: 2px;
     height: calc(100vh - 63px);
   }
+
   .body-content {
     width: 100%;
     height: 100%;
+    overflow: auto;
   }
 `;
 

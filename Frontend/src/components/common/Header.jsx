@@ -1,69 +1,67 @@
-// ...existing code...
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Header = () => {
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef(null);
+  const navigate = useNavigate();
+
+  /* close profile dropdown on outside click */
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <HeaderWrapper>
+      {/* LEFT */}
       <div className="left">
-        <Link to="/" className="logo" aria-label="Typing App Home">
+        <Link to="/" className="logo">
           <span className="logo-mark">T</span>
           <span className="logo-text">TypingApp</span>
         </Link>
-
-        <nav className={open ? "open" : ""} aria-label="Main navigation">
-          <Link to="/" className="nav-link" onClick={() => setOpen(false)}>
-            Home
-          </Link>
-          <Link
-            to="/practice"
-            className="nav-link"
-            onClick={() => setOpen(false)}
-          >
-            Practice
-          </Link>
-          <Link
-            to="/leaderboard"
-            className="nav-link"
-            onClick={() => setOpen(false)}
-          >
-            Leaderboard
-          </Link>
-          <Link to="/about" className="nav-link" onClick={() => setOpen(false)}>
-            About
-          </Link>
-        </nav>
       </div>
 
+      {/* RIGHT */}
       <div className="right">
-        <div className="search" role="search" aria-label="Header search">
+        <div className="search">
           <input
             className="search-input"
             type="search"
             placeholder="Search tests, users..."
-            aria-label="Search"
           />
-          <button className="icon-btn" aria-label="Search">
-            🔍
-          </button>
+          <button className="icon-btn">🔍</button>
         </div>
 
-        <button className="icon-btn" title="Settings" aria-label="Settings">
+        <button className="icon-btn" title="Settings">
           ⚙️
         </button>
 
-        <div className="avatar" title="Profile" aria-label="Profile">
-          JD
+        {/* PROFILE */}
+        <div className="profile" ref={profileRef}>
+          <button className="avatar" onClick={() => setProfileOpen((v) => !v)}>
+            JD
+          </button>
+
+          {profileOpen && (
+            <div className="profile-dropdown">
+              <button onClick={() => navigate("/settings")}>⚙ Settings</button>
+              <button onClick={() => navigate("/account")}>
+                📊 User Stats
+              </button>
+            </div>
+          )}
         </div>
 
-        <button
-          className={`menu-toggle`}
-          aria-label="Toggle menu"
-          onClick={() => setOpen((s) => !s)}
-        >
+        {/* MOBILE MENU */}
+        <button className="menu-toggle" onClick={() => setMenuOpen((s) => !s)}>
           <span className="bar" />
           <span className="bar" />
           <span className="bar" />
@@ -73,30 +71,32 @@ const Header = () => {
   );
 };
 
+export default Header;
+
+/* ================== STYLES ================== */
+
 const HeaderWrapper = styled.header`
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 1rem;
-  background: linear-gradient(90deg, #071026 0%, #0b1624 100%);
+  align-items: center;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #071026, #0b1624);
   color: #e6eef8;
-  box-shadow: 0 2px 12px rgba(2, 6, 23, 0.6);
   position: sticky;
   top: 0;
-  z-index: 40;
-  backdrop-filter: blur(6px);
+  z-index: 50;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
 
   .left {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 16px;
   }
 
   .logo {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 8px;
     text-decoration: none;
     color: #fff;
     font-weight: 700;
@@ -108,106 +108,122 @@ const HeaderWrapper = styled.header`
     border-radius: 8px;
     background: linear-gradient(135deg, #2dd4bf, #06b6d4);
     color: #021026;
-    font-weight: 800;
-    font-size: 1.1rem;
-    display: inline-flex;
+    display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: 800;
   }
 
   nav {
     display: flex;
-    gap: 0.8rem;
-    margin-left: 12px;
-    align-items: center;
+    gap: 10px;
   }
 
-  a.nav-link {
+  .nav-link {
     color: #cfe9ff;
     text-decoration: none;
-    padding: 0.45rem 0.6rem;
+    padding: 6px 10px;
     border-radius: 6px;
-    transition: background 160ms, color 160ms, transform 160ms;
-    font-size: 0.95rem;
   }
 
-  a.nav-link:hover {
-    background: rgba(255, 255, 255, 0.03);
+  .nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    transform: translateY(-1px);
   }
 
   .right {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 10px;
   }
 
   .search {
     display: flex;
     align-items: center;
-    gap: 0.4rem;
-    background: rgba(255, 255, 255, 0.02);
-    padding: 0.25rem;
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 4px;
   }
 
-  input.search-input {
+  .search-input {
     background: transparent;
     border: none;
     outline: none;
-    color: #dbeafe;
-    padding: 0.35rem 0.5rem;
-    width: 200px;
-    font-size: 0.95rem;
+    color: #e6eef8;
+    padding: 4px 8px;
+    width: 180px;
   }
 
-  button.icon-btn {
+  .icon-btn {
     background: transparent;
     border: none;
     color: #cfe9ff;
-    padding: 0.35rem;
-    border-radius: 8px;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+  }
+
+  .icon-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .profile {
+    position: relative;
   }
 
   .avatar {
     width: 36px;
     height: 36px;
-    border-radius: 999px;
-    background: linear-gradient(180deg, #0b1224 0%, #0f2432 100%);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #0b1224, #0f2432);
     color: #bfe9ff;
     font-weight: 700;
-    font-size: 0.9rem;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: pointer;
+  }
+
+  .profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: 46px;
+    background: #0b1224;
+    border-radius: 10px;
+    min-width: 180px;
+    padding: 6px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .profile-dropdown button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #cfe9ff;
+    padding: 10px;
+    text-align: left;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .profile-dropdown button:hover {
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
   }
 
   .menu-toggle {
     display: none;
+    flex-direction: column;
+    gap: 3px;
     background: transparent;
     border: none;
-    width: 40px;
-    height: 36px;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
-    padding: 0;
   }
 
   .menu-toggle .bar {
-    display: block;
-    height: 2px;
     width: 18px;
-    background: #bcdff8;
-    margin: 3px 0;
-    border-radius: 2px;
+    height: 2px;
+    background: #cfe9ff;
   }
 
   @media (max-width: 900px) {
@@ -216,40 +232,27 @@ const HeaderWrapper = styled.header`
       top: 64px;
       left: 0;
       right: 0;
-      background: linear-gradient(
-        0deg,
-        rgba(7, 16, 38, 0.98),
-        rgba(7, 16, 38, 0.98)
-      );
       flex-direction: column;
-      gap: 0;
-      padding: 0.6rem;
-      transform: translateY(-10px);
+      background: #071026;
+      padding: 8px;
       opacity: 0;
       pointer-events: none;
-      transition: all 180ms ease;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+      transform: translateY(-10px);
+      transition: all 0.2s ease;
     }
 
     nav.open {
-      transform: translateY(0);
       opacity: 1;
       pointer-events: auto;
-    }
-
-    nav a.nav-link {
-      padding: 0.8rem 1rem;
-      border-radius: 6px;
-    }
-
-    input.search-input {
-      width: 110px;
+      transform: translateY(0);
     }
 
     .menu-toggle {
-      display: inline-flex;
+      display: flex;
+    }
+
+    .search-input {
+      width: 120px;
     }
   }
 `;
-
-export default Header;
